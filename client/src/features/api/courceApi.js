@@ -23,8 +23,17 @@ export const CourceApi=createApi({
                
             }),
             providesTags:["Refetch_Creator_Cource"]
+        }),
+        editCource:builder.mutation({
+            query:({formData,courceId})=>({
+                url:`/${courceId}`,
+                method:"PUT",
+                body:formData
+               
+            }),
         })
+
         
     })
 });
-export const {useCreateCourceMutation,useGetCreatorCourceQuery}=CourceApi
+export const {useCreateCourceMutation,useGetCreatorCourceQuery,useEditCourceMutation}=CourceApi

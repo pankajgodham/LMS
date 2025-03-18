@@ -18,9 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEditCourceMutation } from "@/features/api/courceApi";
 import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const CourceTab = () => {
   const [input, setInput] = useState({
@@ -34,6 +36,9 @@ const CourceTab = () => {
   });
   const [previewThumbnail,setPreviewThumbnail]=useState("")
   const navigate=useNavigate()
+  const params=useParams()
+  const courceId=params.courceId
+  const [editCource,{data,isLoading,isSuccess,error}]=useEditCourceMutation();
   const chcangeEventHandler = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
@@ -56,12 +61,30 @@ const CourceTab = () => {
 
   }
 
-const updateCourceHandler=()=>{
-    console.log(input);
+const updateCourceHandler=async()=>{
+  const formdata=new FormData();
+  formdata.append("courceTitle",input.courceTitle);
+  formdata.append("subtitle",input.subTitle);
+  formdata.append("description",input.description);
+  formdata.append("category",input.category);
+  formdata.append("courceLevel",input.courceLevel);
+  formdata.append("courcePrice",input.courcePrice);
+  formdata.append("courceThumbnail",input.courceThumbnail);
+
+    await editCource({formdata,courceId})
     
 }
+
+useEffect(()=>{
+if(isSuccess){
+  toast.success(data.message || "cousce Updated")
+}
+if (error) {
+  toast.error(error.data.message || "Error");
+}
+},[isSuccess,error])
   const isPublished = true;
-  const isLoading=false;
+
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
