@@ -18,13 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEditCourceMutation } from "@/features/api/courceApi";
+import { useEditCourceMutation, useGetCourceByIdQuery } from "@/features/api/courceApi";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const CourceTab = () => {
+
   const [input, setInput] = useState({
     courceTitle: "",
     subTitle: "",
@@ -34,10 +35,28 @@ const CourceTab = () => {
     courcePrice: "",
     courceThumbnail: "",
   });
+  const params=useParams()
+  const courceId=params.courceId;
+  const {data:courceByIdData,isLoading:courceByIdLoading}=useGetCourceByIdQuery(courceId,{refetchOnMountOrArgChange:true})
+ 
+  useEffect(()=>{
+    
+    if (courceByIdData?.cource) {
+      const cource=courceByIdData?.cource;
+      setInput({
+        courceTitle: cource.courceTitle,
+        subTitle: cource.subTitle,
+        description: cource.description,
+        category: cource.category,
+        courceLevel: cource.courceLevel,
+        courcePrice: cource.courcePrice,
+        courceThumbnail: "",
+      })
+    }
+  },[courceByIdData]);
   const [previewThumbnail,setPreviewThumbnail]=useState("")
   const navigate=useNavigate()
-  const params=useParams()
-  const courceId=params.courceId
+  
   const [editCource,{data,isLoading,isSuccess,error}]=useEditCourceMutation();
   const chcangeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -64,14 +83,16 @@ const CourceTab = () => {
 const updateCourceHandler=async()=>{
   const formdata=new FormData();
   formdata.append("courceTitle",input.courceTitle);
-  formdata.append("subtitle",input.subTitle);
+  formdata.append("subTitle",input.subTitle);
   formdata.append("description",input.description);
   formdata.append("category",input.category);
   formdata.append("courceLevel",input.courceLevel);
   formdata.append("courcePrice",input.courcePrice);
   formdata.append("courceThumbnail",input.courceThumbnail);
+  console.log(formdata);
+  
 
-    await editCource({formdata,courceId})
+  await editCource({ formData: formdata, courceId })
     
 }
 
@@ -83,6 +104,8 @@ if (error) {
   toast.error(error.data.message || "Error");
 }
 },[isSuccess,error])
+
+if(courceByIdLoading) return <Loader2 className="h-4 w-4 animate-spin"/>
   const isPublished = true;
 
   return (

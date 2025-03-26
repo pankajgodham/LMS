@@ -70,7 +70,9 @@ export const editCource=async(req,res)=>{
 
 
       const updateData={courceTitle,subTitle,description,category,courceLevel,courcePrice,courceThumbnail:courceThumbnail?.secure_url}
+
 cource=await Cource.findByIdAndUpdate(courceId,updateData,{new:true});
+console.log(updateData);
 
 return res.status(200).json({
   cource,
@@ -82,5 +84,26 @@ return res.status(200).json({
     return res.status(500).json({
       message: "Failed to Edit course",
     });
+  }
+}
+
+export const getCourceById=async(req,res)=>{
+  try {
+    const {courceId}=req.params;
+    const cource=await Cource.findById(courceId)
+    if (!cource) {
+      return res.status(404).json({
+        message:"Cource not found",
+        })
+    }
+    return res.status(200).json({
+      cource
+      })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed Get Course",
+    });
+    
   }
 }

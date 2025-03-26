@@ -31,9 +31,16 @@ export const CourceApi=createApi({
                 body:formData
                
             }),
-        })
+            invalidatesTags:["Refetch_Creator_Cource"]
+        }),
+        getCourceById:builder.query({
+            query:(courceId)=>({
+                url:`/${courceId}`,
+                method:"GET",
 
+            })
+        })
         
     })
 });
-export const {useCreateCourceMutation,useGetCreatorCourceQuery,useEditCourceMutation}=CourceApi
+export const {useCreateCourceMutation,useGetCreatorCourceQuery,useEditCourceMutation,useGetCourceByIdQuery}=CourceApi
