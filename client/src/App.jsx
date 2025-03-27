@@ -12,6 +12,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import CourceTable from "./pages/admin/Cource/CourceTable";
 import AddCource from "./pages/admin/Cource/AddCource";
 import EditCource from "./pages/admin/Cource/EditCource";
+import CreateLecture from "./pages/admin/lecture/CreateLecture";
 
 const approuter = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const approuter = createBrowserRouter([
           {
             path: "cources/:courceId",
             element:<EditCource/>
+          },
+          {
+            path: "cources/:courceId/lecture",
+            element:<CreateLecture/>
           }
         ]
       }
