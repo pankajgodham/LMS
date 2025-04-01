@@ -46,8 +46,15 @@ export const CourceApi=createApi({
                 method:"POST",
                 body:{lectureTitle}
             })
-        })
+        }),
+        getCourceLecture:builder.query({
+            query:(courceId)=>({
+                url:`/${courceId}/lecture`,
+                method:"GET",
+                
+            })
+        }),
         
     })
 });
-export const {useCreateCourceMutation,useGetCreatorCourceQuery,useEditCourceMutation,useGetCourceByIdQuery,useCreateLectureMutation}=CourceApi
+export const {useCreateCourceMutation,useGetCreatorCourceQuery,useEditCourceMutation,useGetCourceByIdQuery,useCreateLectureMutation,useGetCourceLectureQuery}=CourceApi
