@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const COURCE_API="http://localhost:8080/api/v1/cource"
 export const CourceApi=createApi({
     reducerPath:"courceApi",
-    tagTypes:['Refetch_Creator_Cource'],
+    tagTypes:['Refetch_Creator_Cource',"Refetch_Lecture"],
     baseQuery:fetchBaseQuery({
         baseUrl:COURCE_API,
         credentials:"include"
@@ -49,10 +49,10 @@ export const CourceApi=createApi({
         }),
         getCourceLecture: builder.query({
             query: (courceId) => ({
-              url: `/${courceId}/lecture`, // Ensure the correct route
+              url: `/${courceId}/lecture`, 
               method: "GET",
             }),
-            transformResponse: (response) => response || { lectures: [] }, // Ensure data is always returned
+            providesTags:['Refetch_Lecture'] 
           }),
       editLecture:builder.mutation({
         query:({courceId,lectureId,lectureTitle,videoInfo,isPreviewFree})=>({
@@ -60,7 +60,16 @@ export const CourceApi=createApi({
             method:"POST",
             body:{lectureTitle,videoInfo,isPreviewFree}
         })
-      })  
+      }),
+      removeLecture:builder.mutation({
+        query:(lectureId)=>({
+            url:`/lecture/${lectureId}`,
+            method:"DELETE"
+            
+        }),
+        invalidatesTags:['Refetch_Lecture']
+      }),  
+     
     })
 });
 export const {useCreateCourceMutation,
@@ -69,4 +78,5 @@ export const {useCreateCourceMutation,
     useGetCourceByIdQuery,
     useCreateLectureMutation,
     useGetCourceLectureQuery,
-    useEditLectureMutation}=CourceApi
+    useEditLectureMutation,
+useRemoveLectureMutation}=CourceApi
