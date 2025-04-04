@@ -1,6 +1,6 @@
 import { Cource } from "../models/cource.model.js";
 import { Lecture } from "../models/lecture.model.js";
-import { deleteMediaFromClodinary, uploadMedia } from "../utils/cloudinary.js";
+import { deleteMediaFromClodinary, deletevideoFromClodinary, uploadMedia } from "../utils/cloudinary.js";
 export const createCource = async (req, res) => {
   try {
     const { courceTitle, category } = req.body;
@@ -150,21 +150,100 @@ export const createLecture = async (req, res) => {
 
 export const getCourceLecture = async (req, res) => {
   try {
-    const { courceId } = req.params;
+    const {courceId} = req.params;
     const cource = await Cource.findById(courceId).populate("lectures");
-    if (!cource) {
-      return res.status(404).json({
-        message: "Cource not found",
-      });
-      
+    if(!cource){
+        return res.status(404).json({
+            message:"Course not found"
+        })
     }
     return res.status(200).json({
-     lectures:cource.lectures,
+        lectures: cource.lectures
     });
+
+} catch (error) {
+    console.log(error);
+    return res.status(500).json({
+        message:"Failed to get lectures"
+    })
+}
+}
+export const editLecture=async(req,res)=>{
+  try {
+    const {lectureTitle,videoInfo,isPreviewFree}=req.body;
+    const {courceId,lectureId}=req.params;
+    const lecture=await Lecture.findById(lectureId)
+    if (!lecture) {
+      return res.status(404).json({
+        message: "Lecture Not Found",
+      });
+    } 
+    if(lectureTitle) lecture.lectureTitle=lectureTitle;
+    if(videoInfo.videoUrl) lecture.videoUrl=videoInfo.videoUrl;
+    if(videoInfo.publicId) lecture.publicId=videoInfo.publicId;
+    if(isPreviewFree) lecture.isPreviewFree=isPreviewFree;
+    await lecture.save()
+    const cource=await Cource.findById(courceId);
+    if (cource && cource.lectures.includes(lecture._id)) {
+      cource.lectures.push(lecture._id)
+      await cource.save()
+    }
+    return res.status(200).json({
+      lecture,
+      message:"Lecture Updated successfully"
+     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       message: "Failed To Get Lecture",
     });
   }
-};
+}
+export const removeLecture=async(req,res)=>{
+  try {
+    const {lectureId}=req.params;
+    const lecture=await Lecture.findByIdAndDelete(lectureId)
+    if (!lecture) {
+      return res.status(404).json({
+        message: "Lecture Not Found",
+      });
+    } 
+
+    if (lecture.publicId) {
+      await deletevideoFromClodinary(lecture.publicId)
+    }
+      await Cource.updateOne(
+        {lectures:lectureId},
+        {$pull:{lectures:lectureId}}
+      )
+      return res.status(200).json({
+        lecture,
+        message:"Lecture Removed successfully"
+       });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed To Remove Lecture",
+    });
+  }
+}
+
+export const getLectureById=async(req,res)=>{
+  try {
+    const {lectureId}=req.params;
+    const lecture=await Lecture.find(lectureId)
+    if (!lecture) {
+      return res.status(404).json({
+        message: "Lecture Not Found",
+      });
+    } 
+    return res.status(200).json({
+      lecture
+     });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed To Get Lecture",
+    });
+  }
+}

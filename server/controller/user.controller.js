@@ -87,10 +87,10 @@ export const logout=async(_,res)=>{
 export const getUserProfile = async (req, res) => {
   try {
     const userId=req.id;
-    console.log(userId);
+   
     
     const user=await User.findById(userId).select("-password");
-    console.log(user);
+   
     
     if(!user){
       return res.status(404).json({

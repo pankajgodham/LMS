@@ -11,14 +11,17 @@ import Lecture from "./Lecture";
 const CreateLecture = () => {
   const params = useParams();
   const courceId = params.courceId;
+  console.log(courceId);
+  
   const [lectureTitle, setLectureTitle] = useState("");
 
   const navigate = useNavigate();
 
-  const [CreateLecture, { data, isLoading, error, isSuccess }] =
-    useCreateLectureMutation();
+  const [CreateLecture, { data, isLoading, error, isSuccess }] =useCreateLectureMutation();
 
     const {data:lectureData,isLoading:lectureLoding,isError:lectureError,refetch}=useGetCourceLectureQuery(courceId);
+    console.log(lectureData);
+    
   const createLectureHandler = async () => {
     await CreateLecture({ lectureTitle, courceId });
   };
@@ -33,7 +36,16 @@ const CreateLecture = () => {
     }
   }, [isSuccess, error]);
 
+  useEffect(() => {
+    console.log("Fetching Lectures...");
+    console.log("Lecture Data:", lectureData);
+    console.log("Lecture Loading:", lectureLoding);
+    console.log("Lecture Error:", lectureError);
   
+    if (lectureError) {
+      console.error("Lecture Fetching Error:", lectureError);
+    }
+  }, [lectureData, lectureLoding, lectureError]);
   return (
     <div className="flex-1 mx-10">
       <div className="mb-4">

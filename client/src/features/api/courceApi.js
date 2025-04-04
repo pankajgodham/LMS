@@ -47,14 +47,26 @@ export const CourceApi=createApi({
                 body:{lectureTitle}
             })
         }),
-        getCourceLecture:builder.query({
-            query:(courceId)=>({
-                url:`/${courceId}/lecture`,
-                method:"GET",
-                
-            })
-        }),
-        
+        getCourceLecture: builder.query({
+            query: (courceId) => ({
+              url: `/${courceId}/lecture`, // Ensure the correct route
+              method: "GET",
+            }),
+            transformResponse: (response) => response || { lectures: [] }, // Ensure data is always returned
+          }),
+      editLecture:builder.mutation({
+        query:({courceId,lectureId,lectureTitle,videoInfo,isPreviewFree})=>({
+            url:`/${courceId}/lecture/${lectureId}`,
+            method:"POST",
+            body:{lectureTitle,videoInfo,isPreviewFree}
+        })
+      })  
     })
 });
-export const {useCreateCourceMutation,useGetCreatorCourceQuery,useEditCourceMutation,useGetCourceByIdQuery,useCreateLectureMutation,useGetCourceLectureQuery}=CourceApi
+export const {useCreateCourceMutation,
+    useGetCreatorCourceQuery,
+    useEditCourceMutation,
+    useGetCourceByIdQuery,
+    useCreateLectureMutation,
+    useGetCourceLectureQuery,
+    useEditLectureMutation}=CourceApi
