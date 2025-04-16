@@ -179,9 +179,9 @@ export const editLecture=async(req,res)=>{
       });
     } 
     if(lectureTitle) lecture.lectureTitle=lectureTitle;
-    if(videoInfo.videoUrl) lecture.videoUrl=videoInfo.videoUrl;
-    if(videoInfo.publicId) lecture.publicId=videoInfo.publicId;
-    if(isPreviewFree) lecture.isPreviewFree=isPreviewFree;
+    if(videoInfo?.videoUrl) lecture.videoUrl=videoInfo.videoUrl;
+    if(videoInfo?.publicId) lecture.publicId=videoInfo.publicId;
+    lecture.isPreviewFree=isPreviewFree;
     await lecture.save()
     const cource=await Cource.findById(courceId);
     if (cource && cource.lectures.includes(lecture._id)) {
@@ -230,8 +230,8 @@ export const removeLecture=async(req,res)=>{
 
 export const getLectureById=async(req,res)=>{
   try {
-    const {lectureId}=req.params;
-    const lecture=await Lecture.find(lectureId)
+    const {lectureId} = req.params;
+        const lecture = await Lecture.findById(lectureId);
     if (!lecture) {
       return res.status(404).json({
         message: "Lecture Not Found",
@@ -244,6 +244,30 @@ export const getLectureById=async(req,res)=>{
     console.log(error);
     return res.status(500).json({
       message: "Failed To Get Lecture",
+    });
+  }
+}
+
+export const togglePublishCource=async(req,res)=>{
+  try {
+    const {courceId}=req.params;
+    const {publish}=req.query;
+    const cource=await Cource.findById(courceId)
+    if (!cource) {
+      return res.status(404).json({
+        message: "Course Not Found",
+      });
+    } 
+    cource.isPublished=isPublished==="true"
+    await cource.save()
+    const statusMessage=cource.isPublished?"Published":"Unpublished"
+    return res.status(200).json({
+      message:`course is ${statusMessage}`
+     });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed To Publish Course",
     });
   }
 }

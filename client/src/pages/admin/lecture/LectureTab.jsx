@@ -10,8 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
-import { useEditLectureMutation, useRemoveLectureMutation } from "@/features/api/courceApi";
+import { useEditLectureMutation, useGetLectureByIdQuery, useRemoveLectureMutation } from "@/features/api/courceApi";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -27,7 +28,17 @@ const LectureTab = () => {
 
   const params=useParams();
   const {courceId,lectureId}=params;
-
+  const {data:lectureData}=useGetLectureByIdQuery(lectureId);
+  const lecture=lectureData?.lecture;
+  
+  
+  useEffect(()=>{
+    if (lecture) {
+      setLectureTitle(lecture.lectureTitle);
+      setIsFree(lecture.isPreviewFree)
+      setUploadVideoInfo(lecture.videoInfo)
+    }
+  },[lecture])
   const [editLecture,{data,isLoading,isSuccess,error}]= useEditLectureMutation();
   const [removeLecture,{data:removeData,isLoading:removeLoading,isSuccess:removeSuccess}]=useRemoveLectureMutation()
   const fileChangeHandler = async (e) => {
@@ -92,7 +103,14 @@ const LectureTab = () => {
           <CardDescription>Make Changes in your Lecture</CardDescription>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="destructive" onClick={removeLectureHandler}>Remove Lecture</Button>
+          <Button disabled={removeLoading} variant="destructive" onClick={removeLectureHandler}>
+          {
+              removeLoading?<>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+              Please Wait
+              </>: "Remove Lecture"
+          }
+</Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -113,7 +131,7 @@ const LectureTab = () => {
           />
         </div>
         <div className="flex items-center space-x-2 my-5">
-          <Switch id="airplane-mode" />
+          <Switch checked={isFree} onCheckedChange={setIsFree} id="airplane-mode" />
           <Label htmlFor="airplane-mode">Is this Video FREE?</Label>
         </div>
         {mediaProgress && (
@@ -123,7 +141,14 @@ const LectureTab = () => {
           </div>
         )}
         <div className="mt-4">
-          <Button onClick={editLectureHandler}>Update Lecture</Button>
+          <Button disabled={isLoading} onClick={editLectureHandler}>
+          {
+            isLoading?<>
+             <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+              Please Wait
+              </>: "Update Lecture"
+          }  
+          </Button>
         </div>
       </CardContent>
     </Card>

@@ -69,7 +69,13 @@ export const CourceApi=createApi({
         }),
         invalidatesTags:['Refetch_Lecture']
       }),  
-     
+     getLectureById:builder.query({
+        query:(lectureId)=>({
+            url:`/lecture/${lectureId}`,
+            method:"GET"
+
+        })
+     })
     })
 });
 export const {useCreateCourceMutation,
@@ -79,4 +85,6 @@ export const {useCreateCourceMutation,
     useCreateLectureMutation,
     useGetCourceLectureQuery,
     useEditLectureMutation,
-useRemoveLectureMutation}=CourceApi
+    useRemoveLectureMutation,
+    useGetLectureByIdQuery,
+}=CourceApi
