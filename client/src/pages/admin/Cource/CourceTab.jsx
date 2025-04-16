@@ -21,6 +21,7 @@ import {
 import {
   useEditCourceMutation,
   useGetCourceByIdQuery,
+  usePublishCourceMutation,
 } from "@/features/api/courceApi";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -39,9 +40,9 @@ const CourceTab = () => {
   });
   const params = useParams();
   const courceId = params.courceId;
-  const { data: courceByIdData, isLoading: courceByIdLoading } =
+  const { data: courceByIdData, isLoading: courceByIdLoading,refetch } =
     useGetCourceByIdQuery(courceId, { refetchOnMountOrArgChange: true });
-
+    const [publsihCource]=usePublishCourceMutation()
   useEffect(() => {
     if (courceByIdData?.cource) {
       const cource = courceByIdData?.cource;
@@ -61,6 +62,7 @@ const CourceTab = () => {
 
   const [editCource, { data, isLoading, isSuccess, error }] =
     useEditCourceMutation();
+
   const chcangeEventHandler = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
@@ -82,6 +84,19 @@ const CourceTab = () => {
     }
   };
 
+  const publishStatusHandler=async(action)=>{
+  try {
+    const response=await publsihCource({courceId,query:action})
+    if(response.data){
+      refetch()
+      toast.success(response.data.message)
+    }
+
+  } catch (error) {
+    toast.error("Failed to Publish or Unpublished Course")
+    
+  }
+  }
   const updateCourceHandler = async () => {
     const formdata = new FormData();
     formdata.append("courceTitle", input.courceTitle);
@@ -96,6 +111,7 @@ const CourceTab = () => {
     await editCource({ formData: formdata, courceId });
   };
 
+
   useEffect(() => {
     if (isSuccess) {
       toast.success(data.message || "cousce Updated");
@@ -106,7 +122,6 @@ const CourceTab = () => {
   }, [isSuccess, error]);
 
   if (courceByIdLoading) return <Loader2 className="h-4 w-4 animate-spin" />;
-  const isPublished = true;
 
   return (
     <Card>
@@ -118,8 +133,8 @@ const CourceTab = () => {
           </CardDescription>
         </div>
         <div className="space-x-2 gap-2">
-          <Button variant="outline">
-            {isPublished ? "Unpublished" : "Published"}
+          <Button disabled={courceByIdData?.cource.lectures.length===0} variant="outline" onClick={()=>publishStatusHandler(courceByIdData?.cource.isPublished?"false":"true")}>
+            {courceByIdData?.cource.isPublished ? "Unpublish" : "Publish"}
           </Button>
           <Button>Remove Course</Button>
         </div>

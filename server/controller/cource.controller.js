@@ -258,7 +258,7 @@ export const togglePublishCource=async(req,res)=>{
         message: "Course Not Found",
       });
     } 
-    cource.isPublished=isPublished==="true"
+    cource.isPublished=publish==="true";
     await cource.save()
     const statusMessage=cource.isPublished?"Published":"Unpublished"
     return res.status(200).json({

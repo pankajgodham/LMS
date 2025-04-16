@@ -13,5 +13,5 @@ router.route("/:courceId/lecture").get(isAuthenticated,getCourceLecture)
 router.route("/:courceId/lecture/:lectureId").post(isAuthenticated,editLecture)
 router.route("/lecture/:lectureId").delete(isAuthenticated, removeLecture)
 router.route("/lecture/:lectureId").get(isAuthenticated, getLectureById)
-router.route("/:courceId").put(isAuthenticated,togglePublishCource)
+router.route("/:courceId").patch(isAuthenticated,togglePublishCource)
 export default router; 
