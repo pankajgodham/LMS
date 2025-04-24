@@ -16,6 +16,13 @@ export const CourceApi=createApi({
             }),
             invalidatesTags:["Refetch_Creator_Cource"]
         }),
+        getPublishedCource:builder.query({
+            query:()=>({
+                url:"/published-cources",
+                method:"GET",
+               
+            }),
+        }),
          getCreatorCource:builder.query({
             query:()=>({
                 url:"",
@@ -96,4 +103,5 @@ export const {useCreateCourceMutation,
     useRemoveLectureMutation,
     useGetLectureByIdQuery,
     usePublishCourceMutation,
+    useGetPublishedCourceQuery,
 }=CourceApi

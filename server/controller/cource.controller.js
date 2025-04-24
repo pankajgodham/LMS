@@ -26,6 +26,26 @@ export const createCource = async (req, res) => {
     });
   }
 };
+export const publishedCource=async(_,res)=>{
+  try {
+    const cources=await Cource.find({isPublished:true}).populate({path:"creator",select:"name photoUrl"})
+    if(!cources){
+      return res.status(404).json({
+        message: "Course not found",
+      });
+
+    }
+    res.status(200).json({
+      cources,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Failed to get published course",
+    });
+  }
+}
 export const getCreatorCources = async (req, res) => {
   try {
     const userId = req.id;

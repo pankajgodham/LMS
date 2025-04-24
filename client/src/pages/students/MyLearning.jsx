@@ -14,7 +14,7 @@ const MyLearning = () => {
                 ):mylearnings.length===0?(<p>You are not enroll in any cources</p>):(
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
                         {
-                             [1,2].map((cource,index)=><Cource key={index}/>)   
+                             [1,2].map((cource,index)=><Cource key={index} cource={cource}/>)   
                         }
                     </div>
                    

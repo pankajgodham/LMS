@@ -14,6 +14,7 @@ import AddCource from "./pages/admin/Cource/AddCource";
 import EditCource from "./pages/admin/Cource/EditCource";
 import CreateLecture from "./pages/admin/lecture/CreateLecture";
 import EditLecture from "./pages/admin/lecture/EditLecture";
+import CourceDetail from "./pages/students/CourceDetail";
 
 const approuter = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const approuter = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/cource-detail/:courceId",
+        element: <CourceDetail />,
       },
       {
         path: "/admin",
