@@ -1,3 +1,5 @@
+
+import BuyCourceButton from '@/components/BuyCourceButton'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -5,7 +7,7 @@ import { BadgeInfo, Lock, PlayCircle } from 'lucide-react'
 import React from 'react'
 
 const CourceDetail = () => {
-    const PurchasedCourse=true
+    const PurchasedCourse=false
   return (
     <div className='mt-20 space-y-5'>
         <div className='bg-[#2D2F31] text-white '>
@@ -60,7 +62,8 @@ const CourceDetail = () => {
                 </CardContent>
                 <CardFooter className='flex justify-center p-4'>
                     {
-                        PurchasedCourse?(<Button className='w-full'>Continue Course</Button>):<Button className='w-full'>Purchase Course</Button>
+                        PurchasedCourse?(<Button className='w-full'>Continue Course</Button>):
+                       (<BuyCourceButton/>)
                     }
                     
                 </CardFooter>
