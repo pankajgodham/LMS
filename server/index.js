@@ -6,6 +6,7 @@ import connectDB from "./database/db.js";
 import userRoutes from "./routes/user.route.js";
 import courceRoute from "./routes/cource.route.js";
 import mediaRoute from "./routes/media.route.js"
+import purchaseRoute from "./routes/purchaseCource.route.js"
 dotenv.config({})
 connectDB();
 const app=express();
@@ -19,6 +20,7 @@ app.use(cors({
 app.use('/api/v1/media',mediaRoute)
 app.use("/api/v1/user",userRoutes)
 app.use("/api/v1/cource",courceRoute)
+app.use("/api/v1/purchase",purchaseRoute)
 app.listen( PORT,()=>{
     console.log(`server run on port no ${PORT}`);
     
