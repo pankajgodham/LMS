@@ -1,6 +1,8 @@
 import Stripe from 'stripe';
 import {Cource} from "../models/cource.model.js"
 import { CourcePurchase } from '../models/purchaseCource.model.js';
+import {Lecture} from '../models/lecture.model.js'
+import {User} from '../models/user.model.js'
 const stripe=new Stripe(process.env.STRIPE_SECRET_KEY)
 
 export const createCheckoutSession=async(req,res)=>{
@@ -28,7 +30,7 @@ export const createCheckoutSession=async(req,res)=>{
                     name: cource.courceTitle,
                     images: [cource.courceThumbnail],
                   },
-                  unit_amount: cource.coursePrice * 100, // Amount in paise (lowest denomination)
+                  unit_amount: cource.courcePrice * 100, // Amount in paise (lowest denomination)
                 },
                 quantity: 1,
               },
@@ -120,7 +122,7 @@ export const stripeWebhook = async (req, res) => {
         );
   
         // Update course to add user ID to enrolledStudents
-        await Course.findByIdAndUpdate(
+        await Cource.findByIdAndUpdate(
           purchase.courceId._id,
           { $addToSet: { enrolledStudents: purchase.userId } }, // Add user ID to enrolledStudents
           { new: true }
@@ -142,7 +144,7 @@ export const stripeWebhook = async (req, res) => {
         .populate({ path: "lectures" });
   
       const purchased = await CourcePurchase.findOne({ userId, courceId });
-      console.log(purchased);
+      
   
       if (!cource) {
         return res.status(404).json({ message: "course not found!" });
@@ -156,3 +158,44 @@ export const stripeWebhook = async (req, res) => {
       console.log(error);
     }
   };
+
+  export const getCourceDetailWithPurchaseDetail=async(req,res)=>{
+    try {
+      const {courceId}=req.params
+      const userId=req.id
+      cource=await Cource.findById(courceId).populate({path:"creator"}).populate({path:"lectures"})
+      const purchased=await CourcePurchase.findOne({userId,courceId})
+      if(!cource){
+        return res.status(404).json({
+          
+          message: "course not found",
+          
+        });
+      }
+      return res.status(200).json({
+        cource,
+        purchased:!!purchased
+      })
+
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+  export const getAllPurchasedCource=async(_,res)=>{
+    try {
+      const purchasedCource=await CourcePurchase.find({status:"completed"}).populate("courceId")
+      if(!purchasedCource){
+        return res.status(404).json({
+          purchasedCource:[]
+        });
+      }
+      return res.status(200).json({
+        purchasedCource
+      })
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }

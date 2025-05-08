@@ -13,11 +13,24 @@ export const purchaseApi=createApi({
                 method:"POST",
                 body:{courceId},
             })
+        }),
+        getCourceDetailWithStatus:builder.query({
+            query:(courceId)=>({
+                url:`/cource/${courceId}/detail-with-status`,
+                method:"GET"
+            })
+        }),
+        getPurchasedCource:builder.query({
+            query:()=>({
+                url:`/`,
+                method:"GET"
+            })
         })
-
     })
 })
 
 export const {
     useCreateCheckoutSessionMutation,
+    useGetCourceDetailWithStatusQuery,
+    useGetPurchasedCourceQuery,
   } = purchaseApi;

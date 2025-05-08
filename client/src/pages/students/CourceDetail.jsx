@@ -3,26 +3,38 @@ import BuyCourceButton from '@/components/BuyCourceButton'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { useGetCourceDetailWithStatusQuery } from '@/features/api/purchaseApi'
 import { BadgeInfo, Lock, PlayCircle } from 'lucide-react'
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import ReactPlayer from 'react-player'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const CourceDetail = () => {
-    const PurchasedCourse=false
     const params=useParams()
     const courceId=params.courceId;
+    const navigate=useNavigate()
+
+    const{data,isLoading,isError}=useGetCourceDetailWithStatusQuery(courceId)
+    if(isLoading) return <h1>Loading....</h1>
+    if(isError) return <h1>Loading....</h1>
+    const {cource,purchased}=data
+    const hanadleContinueCource=()=>{
+        if (purchased) {
+            navigate(`/cource-progress/${courceId}`)  
+        }
+    }
   return (
     <div className='mt-20 space-y-5'>
         <div className='bg-[#2D2F31] text-white '>
             <div className='max-w-7xl mx-auto py-8 px-4 md:px-8 flex flex-col gap-2'>
-                <h1 className='font-bold text-2xl md:text-3x'>Cource title</h1>
-                <p className='text-base md:text-lg'>course Sub-title</p>
-                <p>created by{" "}<span className='text-[#C0C4FC] underline italic'>Pankaj</span></p>
+                <h1 className='font-bold text-2xl md:text-3x'>{cource.courceTitle}</h1>
+                <p className='text-base md:text-lg'>{cource.subTitle}</p>
+                <p>created by{" "}<span className='text-[#C0C4FC] underline italic'>{cource?.creator.name}</span></p>
                 <div className='flex items-center gap-2 text-sm'>
                     <BadgeInfo size={16}/>
-                    <p>Last Updated 12/2/2022</p>
+                    <p>Last Updated {cource?.createdAt.split("T")[0]}</p>
                 </div>
-                <p>Student Enrolled:10</p>
+                <p>Student Enrolled:{cource?.enrolledStudents.length}</p>
             </div>
         </div>
         <div className='max-w-7xl mx-auto my-5 px-4 md:px-8 flex flex-col lg:flex-row justify-between gap-10'>
@@ -30,9 +42,10 @@ const CourceDetail = () => {
                 <h1 className='font-bold text-xl md:text-2xl'>
                     Description
                 </h1>
-                <p className='text-sm'>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Enim incidunt animi quibusdam, cupiditate numquam possimus iusto saepe distinctio rerum temporibus!
-                </p>
+                <div
+  className="text-sm"
+  dangerouslySetInnerHTML={{ __html: cource?.description }}
+/>
                 <Card>
                     <CardHeader>
                         <CardTitle>Course Content</CardTitle>
@@ -40,11 +53,11 @@ const CourceDetail = () => {
                     </CardHeader>
                     <CardContent className='space-y-3 '>
                     {
-  [1, 2, 3].map((_, idx) => (
+  cource.lectures.map((lecture, idx) => (
     <div key={idx} className="flex items-center gap-3 text-sm">
       <div className="flex items-center gap-2">
         {true ? <PlayCircle size={14} /> : <Lock size={14} />}
-        <p>Lecture Title</p>
+        <p>{lecture.lectureTitle}</p>
       </div>
     </div>
   ))
@@ -57,7 +70,12 @@ const CourceDetail = () => {
             <Card>
                 <CardContent className='p-4 flex flex-col'>
                     <div className='w-full aspect-video mb-4'>
-                    Video
+                    <ReactPlayer
+                    width={'100%'}
+                    height={"100%"}
+                    url={cource.lectures[0].videoUrl}
+                    controls={true}
+                    />
                     </div>
                     <h1>Lecture Title</h1>
                     <Separator className='my-2'/>
@@ -65,7 +83,7 @@ const CourceDetail = () => {
                 </CardContent>
                 <CardFooter className='flex justify-center p-4'>
                     {
-                        PurchasedCourse?(<Button className='w-full'>Continue Course</Button>):
+                        purchased?(<Button onClick={hanadleContinueCource} className='w-full'>Continue Course</Button>):
                        (<BuyCourceButton courceId={courceId}/>)
                     }
                     

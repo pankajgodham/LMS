@@ -107,7 +107,7 @@ export const editCource = async (req, res) => {
     cource = await Cource.findByIdAndUpdate(courceId, updateData, {
       new: true,
     });
-    console.log(updateData);
+    
 
     return res.status(200).json({
       cource,

@@ -63,7 +63,7 @@ const invoices = [
 const CourceTable = () => {
   const { data, isLoading } = useGetCreatorCourceQuery();
   const navigate = useNavigate();
-  console.log(data);
+  
 
   if (isLoading) return <h1>Loading....</h1>;
 
