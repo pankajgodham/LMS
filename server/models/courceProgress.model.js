@@ -12,4 +12,4 @@ const courceProgressSchema=new mongoose.Schema({
     lectureProgress:[lectureProgressSchema]
 });
 
-export const courceProgress=mongoose.model("courceProgress",courceProgressSchema)
+export const CourceProgress=mongoose.model("CourceProgress",courceProgressSchema)

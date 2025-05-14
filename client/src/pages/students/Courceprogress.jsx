@@ -1,21 +1,60 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { useGetCourceProgressQuery, useUpdateLectureprogressMutation } from "@/features/api/courceProgressApi";
 import { CheckCircle2, CirclePlay } from "lucide-react";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 const Courceprogress = () => {
-  const completed=true
+  const params=useParams();
+  const courceId=params.courceId
+  const {data,isLoading,isError,refetch}=useGetCourceProgressQuery(courceId);
+  const [updateLectureProgress]=useUpdateLectureprogressMutation()
+  const [currentLecture,setCurrentLecture]=useState(null)
+  if(isLoading) return <p>Loading....</p>
+  if(isError) return <p>Failed to Loaad course Detail....</p>
+  console.log(data);
+  const {courceDetail,progress,completed}=data.data;
+  const {courceTitle}=courceDetail;
+  const initialLecture=currentLecture || courceDetail.lectures && courceDetail.lectures[0]
+  const isLectureCompleted=(lectureId)=>{
+    return progress.some((prog)=>prog.lectureId === lectureId && prog.viewed)
+  }
+
+  const handleSelectLecture=(lecture)=>{
+    setCurrentLecture(lecture)
+  }
+    
+  const handleLectureProgress=async(lectureId)=>{
+    await updateLectureProgress({courceId,lectureId})
+    refetch()
+  }
+
   return (
     <div className="max-w-7xl mx-auto p-4 mt-20">
       <div className="flex justify-between mb-4">
-        <h1 className="text-2xl font-bold">Cource Title</h1>
+        <h1 className="text-2xl font-bold">{courceTitle}</h1>
         <Button>Completed</Button>
       </div>
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex-1 md:w-3/5 h-fit rounded-lg shadow-lg p-4">
-          <div></div>
+          <div>
+          <video
+          src={currentLecture?.videoUrl || initialLecture.videoUrl}
+          controls
+          className="w-full h-auto md:rounded-lg"
+          onPlay={()=>handleLectureProgress(currentLecture?._id  || initialLecture._id)}
+          
+          />
+
+          </div>
           <div className="mt-2 ">
-            <h3 className="font-medium text-lg ">Lecture-1: Introduction</h3>
+            <h3 className="font-medium text-lg ">
+              {
+                `Lecture ${courceDetail.lectures.findIndex((lec)=>lec._id===(currentLecture?._id || initialLecture._id))+1}:${currentLecture?.lectureTitle  ||  initialLecture?.lectureTitle}`
+              }
+            </h3>
           </div>
         </div>
 
@@ -25,18 +64,25 @@ const Courceprogress = () => {
 </h2>
 <div className="flex-1 overflow-y-auto ">
 {
-  [1,2,3,4].map((lecture,idx)=>(
-    <Card key={idx} className="mb-3 hover:cursor-pointer transition transform">
+  courceDetail?.lectures.map((lecture)=>(
+    <Card key={lecture._id} className={`mb-3 hover:cursor-pointer transition transform ${lecture._id ===currentLecture?._id ? 'bg-gray-200':'dark:bg-gray-800'}`}
+    onClick={()=>handleSelectLecture(lecture)}
+    >
         <CardContent className='flex items-center justify-between p-4'>
           <div className="flex items-center">
               {
-                completed?(<CheckCircle2 size={24} className="text-green-500 mr-2"/>) :(<CirclePlay size={24} className="text-gray-500 mr-2"/>)
+                isLectureCompleted(lecture._id)?(<CheckCircle2 size={24} className="text-green-500 mr-2"/>) :(<CirclePlay size={24} className="text-gray-500 mr-2"/>)
               }
               <div>
-                <CardTitle className='text-lg font-medium '>Introduction</CardTitle>
+                <CardTitle className='text-lg font-medium '>{lecture.lectureTitle}</CardTitle>
               </div>
           </div>
-          <Badge variant={"outline"} className="bg-green-200 text-green-600">completed</Badge>
+          {
+            isLectureCompleted(lecture._id)&&(
+<Badge variant={"outline"} className="bg-green-200 text-green-600">completed</Badge>
+            )
+          }
+          
         </CardContent>
     </Card>
   ))

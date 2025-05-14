@@ -80,7 +80,7 @@ const Navbar = () => {
                   <>
                     <DropdownMenuSeparator />
 
-                    <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                    <DropdownMenuItem >Dashboard</DropdownMenuItem>
                   </>
                 )}
               </DropdownMenuContent>

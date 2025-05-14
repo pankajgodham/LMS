@@ -7,4 +7,4 @@ router.route("/:courceId/lecture/:lectureId/view").post(isAunthenticated,updateL
 router.route("/:courceId/complete").get(isAunthenticated,markAsCompleted)
 router.route("/:courceId/incomplete").get(isAunthenticated,markAsInCompleted)
 
-export const router;
+export default router;

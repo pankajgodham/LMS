@@ -9,7 +9,7 @@ export const getCourceProgress = async (req, res) => {
       courceId,
       userId,
     }).populate("courceId");
-    const courceDetail = await Cource.findById(courceId);
+    const courceDetail = await Cource.findById(courceId).populate("lectures");
     if (!courceDetail) {
       return res.status(404).json({
         message: "Cource not found",
@@ -42,7 +42,7 @@ export const updateLectureProgress = async (req, res) => {
     const userId = req.id;
     let courceProgress = await CourceProgress.findOne({ courceId, userId });
     if (!courceProgress) {
-      courceProgress = new courceProgress({
+      courceProgress = new CourceProgress({ 
         userId,
         courceId,
         completed: false,
@@ -75,6 +75,7 @@ export const updateLectureProgress = async (req, res) => {
     console.log(error);
   }
 };
+
 
 export const markAsCompleted = async (req, res) => {
   try {

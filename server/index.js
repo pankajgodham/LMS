@@ -22,7 +22,7 @@ app.use('/api/v1/media',mediaRoute)
 app.use("/api/v1/user",userRoutes)
 app.use("/api/v1/cource",courceRoute)
 app.use("/api/v1/purchase",purchaseRoute)
-app.use("/api/v1/",courceProgressRoute)
+app.use("/api/v1/progress",courceProgressRoute)
 app.listen( PORT,()=>{
     console.log(`server run on port no ${PORT}`);
     
