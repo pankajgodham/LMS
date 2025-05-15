@@ -1,20 +1,38 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { useGetCourceProgressQuery, useUpdateLectureprogressMutation } from "@/features/api/courceProgressApi";
-import { CheckCircle2, CirclePlay } from "lucide-react";
-import { useState } from "react";
+import { useCompleteCourceMutation, useGetCourceProgressQuery, useInCompleteCourceMutation, useUpdateLectureprogressMutation } from "@/features/api/courceProgressApi";
+import { CheckCircle, CheckCircle2, CirclePlay } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const Courceprogress = () => {
   const params=useParams();
   const courceId=params.courceId
   const {data,isLoading,isError,refetch}=useGetCourceProgressQuery(courceId);
   const [updateLectureProgress]=useUpdateLectureprogressMutation()
+  const [completeCource,{data:markCompleteData,isSuccess:completedSuccess}]=useCompleteCourceMutation();
+  const [inCompleteCource,{data:markInCompleteData,isSuccess:inCompletedSuccess}]=useInCompleteCourceMutation()
+
+   useEffect(()=>{
+if(completedSuccess){
+  refetch()
+  toast.success(markCompleteData.message)
+}
+if (inCompletedSuccess) {
+  refetch()
+  toast.success(markInCompleteData.message)
+}
+  },[completedSuccess,inCompletedSuccess])
+
+
   const [currentLecture,setCurrentLecture]=useState(null)
   if(isLoading) return <p>Loading....</p>
   if(isError) return <p>Failed to Loaad course Detail....</p>
   console.log(data);
+  console.log(completedSuccess);
+  
   const {courceDetail,progress,completed}=data.data;
   const {courceTitle}=courceDetail;
   const initialLecture=currentLecture || courceDetail.lectures && courceDetail.lectures[0]
@@ -22,20 +40,37 @@ const Courceprogress = () => {
     return progress.some((prog)=>prog.lectureId === lectureId && prog.viewed)
   }
 
-  const handleSelectLecture=(lecture)=>{
-    setCurrentLecture(lecture)
-  }
-    
-  const handleLectureProgress=async(lectureId)=>{
+   const handleLectureProgress=async(lectureId)=>{
     await updateLectureProgress({courceId,lectureId})
     refetch()
   }
+  const handleSelectLecture=(lecture)=>{
+    setCurrentLecture(lecture)
+    handleLectureProgress(lecture._id)
+  }
+    
+ 
+
+  const handleCompleteCource=async()=>{
+    await completeCource(courceId)
+  }
+
+   const handleInCompleteCource=async()=>{
+    await inCompleteCource(courceId)
+  }
+
+ 
 
   return (
     <div className="max-w-7xl mx-auto p-4 mt-20">
       <div className="flex justify-between mb-4">
         <h1 className="text-2xl font-bold">{courceTitle}</h1>
-        <Button>Completed</Button>
+        <Button onClick={completed ? handleInCompleteCource : handleCompleteCource}
+        variant={completed?"outline":"default"}>
+          {
+            completed? <div className="flex icon-center"><CheckCircle className="h-4 w-4 mr-2"/> <span>completed</span></div>:"Mark as Completed"
+          }
+        </Button>
       </div>
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex-1 md:w-3/5 h-fit rounded-lg shadow-lg p-4">

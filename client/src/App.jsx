@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
+
 import Login from "./pages/login";
 import HeroSection from "./pages/students/HeroSection";
 import MainLayout from "./layout/MainLayout";
@@ -16,6 +16,7 @@ import CreateLecture from "./pages/admin/lecture/CreateLecture";
 import EditLecture from "./pages/admin/lecture/EditLecture";
 import CourceDetail from "./pages/students/CourceDetail";
 import Courceprogress from "./pages/students/courceprogress";
+import SearchPage from "./pages/students/SearchPage";
 
 const approuter = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const approuter = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+       {
+        path: "cource/search",
+        element: <SearchPage />,
       },
       {
         path: "/cource-detail/:courceId",

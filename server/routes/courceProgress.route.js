@@ -4,7 +4,7 @@ import { getCourceProgress, markAsCompleted, markAsInCompleted, updateLecturePro
 const router=express.Router()
 router.route("/:courceId").get(isAunthenticated,getCourceProgress)
 router.route("/:courceId/lecture/:lectureId/view").post(isAunthenticated,updateLectureProgress)
-router.route("/:courceId/complete").get(isAunthenticated,markAsCompleted)
-router.route("/:courceId/incomplete").get(isAunthenticated,markAsInCompleted)
+router.route("/:courceId/complete").post(isAunthenticated,markAsCompleted)
+router.route("/:courceId/incomplete").post(isAunthenticated,markAsInCompleted)
 
 export default router;
