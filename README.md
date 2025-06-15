@@ -1,28 +1,24 @@
-# 🧑‍💼 Job Portal Web Application
+# 📚 Learning Management System (LMS)
 
-A full-featured Job Portal developed using the **MERN Stack (MongoDB, Express.js, React.js, Node.js)**. This project connects **job seekers** and **employers** on a single platform where users can register, post jobs, and apply to open positions. The application is designed to be user-friendly, secure, and scalable.
+A modern, scalable **Learning Management System** developed using the **MERN Stack** (MongoDB, Express.js, React.js, Node.js). This LMS allows admins to manage courses and lectures, instructors to publish content, and learners to track their progress and watch course videos in an intuitive UI.
 
-## 🚀 Features
+## 🚀 Key Features
 
-### 👥 For Job Seekers:
-- User Registration & Login with JWT authentication
-- Browse jobs by title, location, or category
-- View detailed job descriptions
-- Apply to jobs and track application status
-- Update personal profile and resume
+### 👨‍🎓 Learner Functionality:
+- Browse and enroll in available courses
+- Watch video lectures (secure streaming)
+- Track course completion progress
+- Download lecture materials
+- Course rating and feedback (optional)
 
-### 🧑‍💼 For Employers:
-- Employer registration & secure login
-- Post, update, and delete job listings
-- View applicants for posted jobs
-- Manage company profile and branding
+### 🧑‍🏫 Instructor/Creator Functionality:
+- Add new courses with description and thumbnails
+- Upload and manage video lectures
+- Publish or unpublish courses
+- Track enrolled students
 
-### 🌐 General Features:
-- Role-based access control (Admin, Employer, Job Seeker)
-- Responsive UI built with React and Tailwind CSS
-- RESTful APIs using Express.js
-- MongoDB for data storage
-- Form validation and error handling
-- Admin panel for managing users and jobs
-
-
+### ⚙️ Admin Features:
+- Manage all users (students & instructors)
+- Create, update, and delete courses
+- Analytics dashboard (Total users, courses, views)
+- Review feedback and reports
